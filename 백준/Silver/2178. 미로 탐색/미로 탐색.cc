@@ -13,68 +13,54 @@
 #include <sstream>      // 문자열을 스트림으로 변환하기 위한 헤더 파일
 #include <cstdlib>      // 일반적인 유틸리티 함수를 사용하기 위한 헤더 파일
 #include <iomanip>      // 입출력 서식 지정을 위한 헤더 파일
+#include <climits> // INT_MAX를 사용하기 위한 헤더 파일
 
 using namespace std;  // 표준 라이브러리(std)의 네임스페이스를 사용함
 
-static int dx[] = { 0,1,0,-1 };
-static int dy[] = { 1,0,-1,0 };
-static int A[101][101];
-//static vector<vector <int>> A; // 그래프 데이터 저장 인접 리스트
-static bool visited[101][101] = { false }; // 방문 기록 저장 배열
-static int N, M;
-//static bool arrive; // 방문 기록 저장 배열
-void BFS(int i, int j);
+#define X first
+#define Y second
 
-int main() {
+//int board[502][502];
+//bool vis[502][502]; // 해당 칸을 방문했는지 여부 저장
+
+string board[102];
+int dist[102][102];
+int n, m; // n행, m열
+int dx[4] = { 1,0,-1,0 };
+int dy[4] = { 0,1,0,-1 }; // 상하좌우 네 방향
+
+int main()
+{
 	ios::sync_with_stdio(false);	cin.tie(NULL);	cout.tie(NULL);
 
-	//int N, M; // N개의 줄에 M개의 정수로 미로가 주어짐
-	cin >> N >> M;
-	
-	for (int i = 0; i < N; i++)
+	cin >> n >> m;
+	for (int i = 0; i < n; i++)
 	{
-		string s; cin >> s;
-		for (int j = 0; j < M; j++)
-		{
-			A[i][j] = s[j] - '0';
-		}
+		cin >> board[i];
 	}
 
-	BFS(0, 0);
-	cout << A[N - 1][M - 1] << "\n";
-}
-
-void BFS(int i, int j)
-{
-	queue<pair<int, int>> q;
-	q.push(make_pair(i, j));
-
-	while (!q.empty())
+	for (int i = 0; i < n; i++)
 	{
-		int now[2];
-		now[0] = q.front().first;
-		now[1] = q.front().second;
-		q.pop();
-		visited[i][j] = true;
+		fill(dist[i], dist[i] + m, -1);
+	}
 
-		for (int k = 0; k < 4; k++) // 상하좌우 이동에 대해 반복
+	queue<pair<int, int>> Q;
+	Q.push({ 0,0 });
+	dist[0][0] = 0;
+
+	while (!Q.empty())
+	{
+		auto cur = Q.front(); Q.pop();
+		for (int dir = 0; dir < 4; dir++)
 		{
-			// x,y 좌표 계산
-			int x = now[0] + dx[k];
-			int y = now[1] + dy[k];
+			int nx = cur.X + dx[dir];
+			int ny = cur.Y + dy[dir];
 
-			// 좌표 유효성 검사
-			if (x >= 0 && y >= 0 && x < N && y < M)
-			{
-				// 미방문 노드 검사
-				if (A[x][y] != 0 && !visited[x][y])
-				{
-					visited[x][y] = true;
-					// 깊이 업데이트, 현재 위치까지의 거리 + 1
-					A[x][y] = A[now[0]][now[1]] + 1;
-					q.push(make_pair(x, y)); // 새로운 위치 삽입
-				}
-			}
+			if (nx < 0 || nx >= n || ny < 0 || ny >= m) continue;
+			if (dist[nx][ny] >= 0 || board[nx][ny] != '1') continue;
+			dist[nx][ny] = dist[cur.X][cur.Y] + 1;
+			Q.push({ nx,ny });
 		}
 	}
+	cout << dist[n - 1][m - 1] + 1;
 }
