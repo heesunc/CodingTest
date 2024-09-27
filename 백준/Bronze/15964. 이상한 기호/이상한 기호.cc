@@ -20,7 +20,7 @@
 
 using namespace std;
 
-int func(int a, int b)
+long long func(long long a, long long b)
 {
     return (a + b) * (a - b);
 }
@@ -31,7 +31,8 @@ int main() {
     cin.tie(NULL);  // 입력과 출력 스트림을 분리해 성능 최적화
     cout.tie(NULL); // 출력 스트림을 비동기화하여 성능 최적화
 
-    int A, B;
+    long long A, B;
     cin >> A >> B;
+    
     cout << func(A, B);
 }
